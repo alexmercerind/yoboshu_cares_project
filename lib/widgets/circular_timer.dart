@@ -8,8 +8,8 @@ const kCircularTimerDefaultTickingSoundDuration = Duration(seconds: 5);
 /// CircularTimerController
 /// -----------------------
 ///
-/// A controller for [CircularTimer] widget.
-/// Provides abstraction to [resume], [pause] or [reset] the timer.
+/// [CircularTimerController] provides programmatic control over the [CircularTimer] widget.
+/// Methods in this class e.g. [resume], [pause] or [reset] may be used to control the timer.
 ///
 class CircularTimerController {
   /// Duration of the timer.
