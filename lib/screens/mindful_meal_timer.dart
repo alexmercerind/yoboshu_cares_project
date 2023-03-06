@@ -20,10 +20,11 @@ class _MindfulMealTimerState extends State<MindfulMealTimer> {
 
   /// [CircularTimerController] instance to controller the [CircularTimer].
   late final controller = CircularTimerController(
-    const Duration(seconds: 30),
     onComplete: () {
       next();
     },
+    duration: const Duration(seconds: 30),
+    tickingSoundDuration: const Duration(seconds: 5),
   );
 
   // NOTE: Ideally these UI labels must be taken from a localization file.
@@ -160,7 +161,8 @@ class _MindfulMealTimerState extends State<MindfulMealTimer> {
             value: controller.tickingSoundDuration > Duration.zero,
             onChanged: (e) {
               if (e) {
-                controller.tickingSoundDuration = kDefaultTickingSoundDuration;
+                controller.tickingSoundDuration =
+                    kCircularTimerDefaultTickingSoundDuration;
               } else {
                 controller.tickingSoundDuration = Duration.zero;
               }

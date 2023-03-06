@@ -1,8 +1,9 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:just_audio/just_audio.dart';
+import 'package:audioplayers/audioplayers.dart';
 
-const kDefaultTickingSoundDuration = Duration(seconds: 5);
+const kCircularTimerDefaultDuration = Duration(seconds: 30);
+const kCircularTimerDefaultTickingSoundDuration = Duration(seconds: 5);
 
 /// CircularTimerController
 /// -----------------------
@@ -14,16 +15,16 @@ class CircularTimerController {
   /// Duration of the timer.
   final Duration duration;
 
-  /// Invoked when the timer completes.
-  final VoidCallback? onComplete;
-
   /// Ending [Duration] in which the ticking sound should be played.
   Duration tickingSoundDuration;
 
-  CircularTimerController(
-    this.duration, {
+  /// Invoked when the timer completes.
+  final VoidCallback? onComplete;
+
+  CircularTimerController({
+    this.duration = kCircularTimerDefaultDuration,
+    this.tickingSoundDuration = kCircularTimerDefaultTickingSoundDuration,
     this.onComplete,
-    this.tickingSoundDuration = kDefaultTickingSoundDuration,
   });
 
   bool get paused => controller?.isAnimating == false;
@@ -47,7 +48,9 @@ class CircularTimerController {
 
 /// CircularTimer
 /// -------------
+/// A circular timer widget with a progress indicator to show the remaining time.
 ///
+/// Use [CircularTimerController] for programmatic control of the widget.
 /// Does not use any external dependencies. 100% Vanilla Flutter.
 ///
 /// NOTE: Ideally `package:auto_size_text` should be used to handle text scaling.
@@ -95,7 +98,8 @@ class _CircularTimerState extends State<CircularTimer>
                 (1 - widget.controller.controller!.value))
             .inSeconds;
         if (left <= widget.controller.tickingSoundDuration.inSeconds &&
-            left != last) {
+            left != last &&
+            left > 0) {
           last = left;
           await tick();
         }
@@ -110,9 +114,12 @@ class _CircularTimerState extends State<CircularTimer>
     super.dispose();
   }
 
-  Future<void> tick() async {
-    await player.setAsset('asset:///assets/audio/countdown_tick.mp3');
-    await player.play();
+  Future<void> tick() {
+    return player.play(
+      AssetSource('audio/countdown_tick.mp3'),
+      volume: 1.0,
+      position: Duration.zero,
+    );
   }
 
   /// Converts [Duration] to MM:SS format.
@@ -129,7 +136,7 @@ class _CircularTimerState extends State<CircularTimer>
     return Container(
       padding: widget.padding * 0.7,
       decoration: BoxDecoration(
-        color: kContainerColor,
+        color: kCircularTimerContainerColor,
         borderRadius: BorderRadius.circular(
           widget.size / 2 +
               max(
@@ -141,7 +148,7 @@ class _CircularTimerState extends State<CircularTimer>
       child: Container(
         padding: widget.padding * 0.3,
         decoration: BoxDecoration(
-          color: kBackgroundColor,
+          color: kCircularTimerBackgroundColor,
           borderRadius: BorderRadius.circular(
             widget.size / 2 +
                 max(
@@ -151,7 +158,7 @@ class _CircularTimerState extends State<CircularTimer>
           ),
           boxShadow: const [
             BoxShadow(
-              color: kBackgroundColor,
+              color: kCircularTimerBackgroundColor,
               blurRadius: 12,
             ),
           ],
@@ -182,11 +189,11 @@ class _CircularTimerState extends State<CircularTimer>
                                     color: widget
                                                 .controller.controller!.value ==
                                             1.0
-                                        ? kTicksColor
+                                        ? kCircularTimerTicksColor
                                         : widget.controller.controller!.value >
                                                 (12 * 5 - i) / (12 * 5)
-                                            ? kTicksColor
-                                            : kForegroundColor,
+                                            ? kCircularTimerTicksColor
+                                            : kCircularTimerForegroundColor,
                                     height: i % (12 * 5 / 4) == 0
                                         ? 2.4 * unit
                                         : 2.0 * unit,
@@ -212,7 +219,7 @@ class _CircularTimerState extends State<CircularTimer>
                 value: 1.0,
                 strokeWidth: stroke,
                 valueColor: const AlwaysStoppedAnimation<Color>(
-                  kBackgroundColor,
+                  kCircularTimerBackgroundColor,
                 ),
               ),
             ),
@@ -225,7 +232,7 @@ class _CircularTimerState extends State<CircularTimer>
                         .clamp(0.0, 1.0),
                     strokeWidth: stroke,
                     valueColor: const AlwaysStoppedAnimation<Color>(
-                      kForegroundColor,
+                      kCircularTimerForegroundColor,
                     ),
                   ),
                 ),
@@ -246,7 +253,7 @@ class _CircularTimerState extends State<CircularTimer>
                       style: widget.textStyle ??
                           const TextStyle(
                             fontSize: 32.0,
-                            color: kTextColor,
+                            color: kCircularTimerTextColor,
                             fontWeight: FontWeight.w600,
                           ),
                     ),
@@ -256,7 +263,7 @@ class _CircularTimerState extends State<CircularTimer>
                     style: widget.textStyle ??
                         const TextStyle(
                           fontSize: 16.0,
-                          color: kSubtitleTextColor,
+                          color: kCircularTimerSubtitleTextColor,
                           fontWeight: FontWeight.normal,
                         ),
                   ),
@@ -271,9 +278,9 @@ class _CircularTimerState extends State<CircularTimer>
 
 // Default colors used in the widget.
 
-const kTicksColor = Color(0xFFC1C1C1);
-const kBackgroundColor = Color(0xFFFFFFFF);
-const kForegroundColor = Color(0xFF42AF54);
-const kContainerColor = Color(0xFF95949A);
-const kTextColor = Color(0xFF000000);
-const kSubtitleTextColor = Color(0xFFC1C1C1);
+const kCircularTimerTicksColor = Color(0xFFC1C1C1);
+const kCircularTimerBackgroundColor = Color(0xFFFFFFFF);
+const kCircularTimerForegroundColor = Color(0xFF42AF54);
+const kCircularTimerContainerColor = Color(0xFF95949A);
+const kCircularTimerTextColor = Color(0xFF000000);
+const kCircularTimerSubtitleTextColor = Color(0xFFC1C1C1);
