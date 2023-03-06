@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 
@@ -109,7 +110,6 @@ class _CircularTimerState extends State<CircularTimer>
 
   @override
   void dispose() {
-    widget.controller.controller?.dispose();
     player.dispose();
     super.dispose();
   }
@@ -258,11 +258,10 @@ class _CircularTimerState extends State<CircularTimer>
                           ),
                     ),
                   ),
-                  Text(
+                  AutoSizeText(
                     'minutes remaining',
                     style: widget.textStyle ??
                         const TextStyle(
-                          fontSize: 16.0,
                           color: kCircularTimerSubtitleTextColor,
                           fontWeight: FontWeight.normal,
                         ),

@@ -1,5 +1,6 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 
 import 'package:yoboshu_cares_project/utils/theme.dart';
 import 'package:yoboshu_cares_project/widgets/buttons.dart';
@@ -150,9 +151,15 @@ class _MindfulMealTimerState extends State<MindfulMealTimer> {
             ),
           ),
           Expanded(
-            child: Center(
-              child: CircularTimer(
-                controller: controller,
+            child: LayoutBuilder(
+              builder: (context, constraints) => Center(
+                child: CircularTimer(
+                  size: min(
+                    200.0,
+                    constraints.maxHeight - 120.0,
+                  ),
+                  controller: controller,
+                ),
               ),
             ),
           ),
